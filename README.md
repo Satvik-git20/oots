@@ -45,19 +45,45 @@ One-command scripts (compile + run):
 
 The number of cycles is a command-line argument (default `3`).
 
-## Verified run (Temurin JDK 21, cycles = 3, fixed seeds 42–44)
+## Verified run (Temurin JDK 21.0.13, Windows 11, cycles = 3, fixed seeds 42–44)
 
-The simulation is deterministic for a fixed cycle count (per-junction seeds `42 + j`); only the
-*line order* of the three controllers' console output varies with thread interleaving.
+Compiled with `javac -Xlint:all` → **zero warnings**, and executed repeatedly: the derived content
+(faults, densities, server report, priority) is identical every run — only the *line order* of the
+three controllers' output can vary with thread interleaving.
 
 | Check | Expected | Observed |
 |-------|----------|----------|
-| T1 — three signal lines per junction | 9 `cycle:` lines | ✅ Pass |
-| T2 — sensor faults | warnings logged, loop continues, 36 readings | ✅ Pass |
-| T3 — emergency priority | J3 cycle 1 → green lane 3 (contains ambulance) | ✅ Pass |
-| T4 — socket reporting | server receives all 3 densities, matching printed arrays | ✅ Pass |
-| T5 — vehicle conservation | arrivals = released + still waiting (31 = 30 + 1) | ✅ Pass |
-| T6 — generic total priority | Car + Bus + Ambulance = 1 + 2 + 10 = 13 | ✅ Pass |
+| T1 — three signal lines per junction | 9 `cycle:` lines (J1/J2/J3 × cycles 1–3) | ✅ 9 of 9 |
+| T2 — sensor faults | warnings logged, loop continues, 36 readings | ✅ 5 WARNs (J1 ×3, J2 ×1, J3 ×1), readings = 36 |
+| T3 — emergency priority | J3 cycle 1 → green lane 3 with the ambulance | ✅ `Ambulance(V22,L3)` first of 5 released on lane 3 |
+| T4 — socket reporting | server receives all 3 densities | ✅ `Server received: {J1=4,5, J2=5,2,4, J3=1,2,3,5}` matches printed arrays |
+| T5 — vehicle conservation | arrivals = released + still waiting | ✅ 31 = 30 released + 1 waiting (J3 lane 0, never green) |
+| T6 — generic total priority | Car + Bus + Ambulance = 1 + 2 + 10 | ✅ 13 |
+
+Console output of one complete run (fixes seed 42+j; see `javac`/`java` commands above to reproduce):
+
+```
+WARN J1: loop fault on lane 0
+WARN J1: loop fault on lane 0
+WARN J1: loop fault on lane 0
+WARN J2: loop fault on lane 2
+WARN J3: loop fault on lane 2
+Sensor readings processed: 36
+J1 lane density [4, 5]
+J2 lane density [5, 2, 4]
+J3 lane density [1, 2, 3, 5]
+J1 cycle 1: green on lane 0, released [Bus(V4,L0), Car(V5,L0), Bus(V8,L0), Car(V9,L0)]
+J3 cycle 1: green on lane 3, released [Ambulance(V22,L3), Bus(V23,L3), Car(V25,L3), Car(V27,L3), Car(V28,L3)]
+J2 cycle 1: green on lane 0, released [Car(V10,L0), Car(V13,L0), Ambulance(V15,L0), Ambulance(V17,L0), Car(V20,L0)]
+J3 cycle 2: green on lane 2, released [Bus(V21,L2), Bus(V24,L2), Car(V31,L2)]
+J2 cycle 2: green on lane 1, released [Bus(V16,L1), Ambulance(V18,L1)]
+J1 cycle 2: green on lane 1, released [Car(V1,L1), Car(V2,L1), Bus(V3,L1), Car(V6,L1), Car(V7,L1)]
+J1 cycle 3: green on lane 0, released []
+J2 cycle 3: green on lane 2, released [Car(V11,L2), Bus(V12,L2), Car(V14,L2), Car(V19,L2)]
+J3 cycle 3: green on lane 1, released [Bus(V29,L1), Bus(V30,L1)]
+Server received: {J1=4,5, J2=5,2,4, J3=1,2,3,5}
+Total priority of sample vehicles: 13
+```
 
 ## Course concept map
 
