@@ -1,0 +1,13 @@
+# Build output
+out/
+*.class
+
+# Editor / IDE
+.idea/
+.vscode/
+*.iml
+
+# Logs and OS noise
+*.log
+Thumbs.db
+.DS_Store
