@@ -102,7 +102,7 @@ Total priority of sample vehicles: 13
 ## Repository
 
 - Full design/console evidence: see the PBL final report (`Final_Report_Smart_Traffic_Monitoring.docx`).
-- Repository URL: **[insert GitHub repository URL]** — add this after publishing.
+- Repository: **https://github.com/Satvik-git20/oots**
 
 ## Future work (from the report, Section 15)
 
