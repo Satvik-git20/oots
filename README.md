@@ -41,7 +41,11 @@ One-command scripts (compile + run):
 
 | Windows PowerShell | Windows CMD   |
 |--------------------|---------------|
-| `.\scripts\run.ps1 3` | `scripts\run.bat 3` |
+| `powershell -ExecutionPolicy Bypass -File scripts\run.ps1 3` | `scripts\run.bat 3` |
+
+> Windows' default execution policy (`Restricted`) blocks `.ps1` files with *"running scripts is
+> disabled on this system"*. Either use the `.bat`, prefix as shown above, or permanently allow
+> your own scripts with `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
 
 The number of cycles is a command-line argument (default `3`).
 
